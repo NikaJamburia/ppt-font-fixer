@@ -4,19 +4,39 @@
     <meta charset="UTF-8">
     <title>PowerPoint Fixer</title>
 </head>
+<style>
+    .hidden {
+        display: none;
+    }
+    .loading-div {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        z-index: 1000;
+        background-color: rgba(255, 255, 255, 0.46);
+        top: 0px;
+        left: 0px;
+        justify-items: center;
+    }
+</style>
 <body>
 
-<h2>Upload PowerPoint File</h2>
+<h2>აირჩიე ფაილი და დააჭირე დაწყებას</h2>
 
-<input type="file" id="fileInput" accept=".ppt,.pptx" />
-<button onclick="uploadFile()">Upload and Process</button>
+<input type="file"  id="fileInput" accept=".ppt,.pptx" />
+<br>
+<button style="margin-top: 20px" onclick="uploadFile()">დაწყება</button>
+
+<div id="loading" class="loading-div hidden">
+    <img src="https://i.sstatic.net/kOnzy.gif" width="200" style="justify-content: center">
+</div>
 
 <script>
     async function uploadFile() {
         const input = document.getElementById('fileInput');
 
         if (!input.files.length) {
-            alert("Please select a file first");
+            alert("ჯერ აირჩიე ფაილი");
             return;
         }
 
@@ -25,6 +45,7 @@
         formData.append("file", file);
 
         try {
+            displayLoading()
             const response = await fetch("http://localhost:8080/fix", {
                 method: "POST",
                 body: formData
@@ -40,7 +61,7 @@
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement("a");
             a.href = url;
-            a.download = "processed.pptx"; // you can customize this
+            a.download = response.headers.get("content-disposition").replace("attachment; filename=", "")
             document.body.appendChild(a);
             a.click();
 
@@ -51,7 +72,17 @@
         } catch (error) {
             console.error(error);
             alert("Error processing file");
+        } finally {
+            hideLoading()
         }
+    }
+
+    function displayLoading() {
+        document.getElementById("loading").classList.remove("hidden")
+    }
+
+    function hideLoading() {
+        document.getElementById("loading").classList.add("hidden")
     }
 </script>
 

@@ -1,4 +1,9 @@
 package ge.nika.pptfontfixer.service;
 
-public record FixPptFontsResult() {
+import java.util.Map;
+
+public record FixPptFontsResult(
+        Map<String, String> fixedTexts,
+        byte[] output
+) {
 }

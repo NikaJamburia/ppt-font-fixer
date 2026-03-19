@@ -2,6 +2,8 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '4.0.3'
     id 'io.spring.dependency-management' version '1.1.7'
+    id 'edu.sc.seis.launch4j' version '4.0.0'
+    id 'com.gradleup.shadow' version '9.3.0'
 }
 
 group = 'ge.nika'
@@ -10,7 +12,7 @@ description = 'ppt-font-fixer'
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(21)
+        languageVersion = JavaLanguageVersion.of(17)
     }
 }
 
@@ -20,10 +22,32 @@ repositories {
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-webmvc'
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    implementation 'org.apache.poi:poi-scratchpad:5.5.1'
+    implementation 'com.amazonaws.serverless:aws-serverless-java-container-springboot2:1.9.1'
+
     testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
 }
 
 tasks.named('test') {
     useJUnitPlatform()
+}
+
+launch4j {
+    mainClassName = 'ge.nika.pptfontfixer.PptFontFixerApplication'
+    icon = "${projectDir}/icon.ico"
+    outfile = 'TestMain.exe'
+    copyConfigurable = []
+    jarTask = project.tasks.bootJar
+    headerType = 'console'
+}
+
+jar {
+    manifest {
+        attributes(
+                'Main-Class': 'ge.nika.pptfontfixer.PptFontFixerApplication'
+        )
+    }
 }
