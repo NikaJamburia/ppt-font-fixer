@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>PowerPoint Fixer</title>
+</head>
+<body>
+
+<h2>Upload PowerPoint File</h2>
+
+<input type="file" id="fileInput" accept=".ppt,.pptx" />
+<button onclick="uploadFile()">Upload and Process</button>
+
+<script>
+    async function uploadFile() {
+        const input = document.getElementById('fileInput');
+
+        if (!input.files.length) {
+            alert("Please select a file first");
+            return;
+        }
+
+        const file = input.files[0];
+        const formData = new FormData();
+        formData.append("file", file);
+
+        try {
+            const response = await fetch("http://localhost:8080/fix", {
+                method: "POST",
+                body: formData
+            });
+
+            if (!response.ok) {
+                throw new Error("Upload failed");
+            }
+
+            const blob = await response.blob();
+
+            // Create download link
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = "processed.pptx"; // you can customize this
+            document.body.appendChild(a);
+            a.click();
+
+            // Cleanup
+            a.remove();
+            window.URL.revokeObjectURL(url);
+
+        } catch (error) {
+            console.error(error);
+            alert("Error processing file");
+        }
+    }
+</script>
+
+</body>
+</html>
