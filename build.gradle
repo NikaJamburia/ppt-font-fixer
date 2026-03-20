@@ -1,7 +1,7 @@
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '4.0.3'
-    id 'io.spring.dependency-management' version '1.1.7'
+    id 'application'
+    id 'org.openjfx.javafxplugin' version '0.1.0'
     id 'edu.sc.seis.launch4j' version '4.0.0'
     id 'com.gradleup.shadow' version '9.3.0'
 }
@@ -16,38 +16,57 @@ java {
     }
 }
 
+javafx {
+    version = '17.0.15'
+    modules = ['javafx.controls', 'javafx.fxml']
+}
+
 repositories {
     mavenCentral()
 }
 
+application {
+    mainClass = 'ge.nika.pptfontfixer.Launcher'
+}
+
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-webmvc'
-    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
     implementation 'org.apache.poi:poi-scratchpad:5.5.1'
-    implementation 'com.amazonaws.serverless:aws-serverless-java-container-springboot2:1.9.1'
+    implementation "org.openjfx:javafx-controls:17.0.15:win"
+    implementation "org.openjfx:javafx-fxml:17.0.15:win"
+    implementation "org.openjfx:javafx-graphics:17.0.15:win"
+    implementation "org.openjfx:javafx-base:17.0.15:win"
 
-    testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.11.4'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
 
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
 }
 
 tasks.named('test') {
     useJUnitPlatform()
 }
 
-launch4j {
-    mainClassName = 'ge.nika.pptfontfixer.PptFontFixerApplication'
-    icon = "${projectDir}/icon.ico"
-    outfile = 'TestMain.exe'
-    copyConfigurable = []
-    jarTask = project.tasks.bootJar
-    headerType = 'console'
-}
-
 jar {
     manifest {
         attributes(
-                'Main-Class': 'ge.nika.pptfontfixer.PptFontFixerApplication'
+                'Main-Class': 'ge.nika.pptfontfixer.Launcher'
         )
     }
+}
+
+tasks.register('jpackage', Exec) {
+    dependsOn shadowJar
+    def jpackagePath = javaToolchains.launcherFor(java.toolchain).get()
+            .executablePath.asFile.parentFile.absolutePath + '/jpackage'
+    def shadowJarFile = shadowJar.archiveFile.get().asFile
+
+    commandLine jpackagePath,
+            '--input', shadowJarFile.parentFile.absolutePath,
+            '--main-jar', shadowJarFile.name,
+            '--main-class', 'ge.nika.pptfontfixer.Launcher',
+            '--name', 'PptFontFixer',
+            '--type', 'app-image',
+            '--dest', "${layout.buildDirectory.get()}/jpackage"
 }

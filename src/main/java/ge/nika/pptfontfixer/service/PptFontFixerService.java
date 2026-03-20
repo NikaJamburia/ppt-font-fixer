@@ -3,14 +3,11 @@ package ge.nika.pptfontfixer.service;
 import org.apache.poi.hslf.usermodel.HSLFSlide;
 import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 import org.apache.poi.hslf.usermodel.HSLFTextRun;
-import org.springframework.stereotype.Component;
-
 import java.io.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
-@Component
 public class PptFontFixerService {
 
     public FixPptFontsResult fixPptFonts(InputStream inputStream) {
