@@ -13,7 +13,7 @@
         <Insets top="30" right="30" bottom="30" left="30"/>
     </padding>
 
-    <Label text="აირჩიე ფაილი და დააჭირე დაწყებას" style="-fx-font-size: 16px;"/>
+    <Label text="მარი, აირჩიე ფაილი და დააჭირე დაწყებას" style="-fx-font-size: 16px;"/>
 
     <Button text="ფაილის არჩევა" onAction="#selectFile" prefWidth="200"/>
 

@@ -11,7 +11,7 @@ public class PptFontFixerApplication extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         Parent root = FXMLLoader.load(getClass().getResource("/fxml/main.fxml"));
-        primaryStage.setTitle("PPT Font Fixer");
+        primaryStage.setTitle("Maris Powerpointis Programa");
         primaryStage.setScene(new Scene(root, 450, 250));
         primaryStage.setResizable(false);
         primaryStage.show();
